@@ -34,6 +34,17 @@ linters:
     - gofumpt
     - nolintlint
     - nosprintfhostport
-    - tenv
+    - usetesting
     - thelper
     - wrapcheck
+
+linters-settings:
+  depguard:
+    rules:
+      default:
+        allow:
+          - $gostd
+          - github.com/multiplay/go-ts3
+          - github.com/mitchellh/mapstructure
+          - golang.org/x/crypto/ssh
+          - github.com/stretchr/testify
