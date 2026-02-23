@@ -5,7 +5,7 @@ on:
     tags:
       - v*
     branches:
-      - main
+      - master
   pull_request:
 permissions:
   contents: read
@@ -14,19 +14,19 @@ jobs:
   go:
     strategy:
       matrix:
-        go: [1.19]
-        golangcli: [v1.50.1]
+        go: [1.24]
+        golangci: [v2.1.1]
         os: [ubuntu-latest, macos-latest, windows-latest]
     name: lint
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Go Cache Paths
         id: go-cache-paths
@@ -36,29 +36,29 @@ jobs:
           echo "GOMODCACHE=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
 
       - name: Go Build Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.go-cache-paths.outputs.GOCACHE }}
           key: ${{ runner.os }}-GOCACHE-${{ hashFiles('**/go.sum') }}
 
       - name: Go Mod Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.go-cache-paths.outputs.GOMODCACHE }}
           key: ${{ runner.os }}-GOMODCACHE-${{ hashFiles('**/go.sum') }}
 
       - name: Go Lint Standard
         if: runner.os != 'Windows'
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         with:
           version: ${{ matrix.golangci }}
-          args: "--out-${NO_FUTURE}format colored-line-number"
+          args: "--out-format colored-line-number"
           skip-pkg-cache: true
           skip-build-cache: true
 
       - name: Go Lint Windows
         if: runner.os == 'Windows'
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v6
         env:
           outformat: out-format
         with:
