@@ -14,19 +14,19 @@ jobs:
   go:
     strategy:
       matrix:
-        go: [1.24]
-        golangci: [v2.1.1]
+        go: [1.26]
+        golangci: [v2.10.1]
         os: [ubuntu-latest, macos-latest, windows-latest]
     name: lint
     runs-on: ${{ matrix.os }}
     steps:
       - name: Setup
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
           go-version: ${{ matrix.go }}
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Go Cache Paths
         id: go-cache-paths
@@ -47,25 +47,10 @@ jobs:
           path: ${{ steps.go-cache-paths.outputs.GOMODCACHE }}
           key: ${{ runner.os }}-GOMODCACHE-${{ hashFiles('**/go.sum') }}
 
-      - name: Go Lint Standard
-        if: runner.os != 'Windows'
-        uses: golangci/golangci-lint-action@v6
+      - name: Go Lint
+        uses: golangci/golangci-lint-action@v9
         with:
           version: ${{ matrix.golangci }}
-          args: "--out-format colored-line-number"
-          skip-pkg-cache: true
-          skip-build-cache: true
-
-      - name: Go Lint Windows
-        if: runner.os == 'Windows'
-        uses: golangci/golangci-lint-action@v6
-        env:
-          outformat: out-format
-        with:
-          version: ${{ matrix.golangci }}
-          args: "--%outformat% colored-line-number --timeout 2m"
-          skip-pkg-cache: true
-          skip-build-cache: true
 
       - name: Go Build
         run: go build ./...

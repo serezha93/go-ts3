@@ -115,10 +115,10 @@ func NotificationBuffer(size int) func(*Client) error {
 //
 // By default, parsing uses an internal buffer and sets the maximum
 // token size to MaxParseTokenSize.
-func Buffer(buf []byte, max int) func(*Client) error {
+func Buffer(buf []byte, maxSize int) func(*Client) error {
 	return func(c *Client) error {
 		c.buf = buf
-		c.maxBufSize = max
+		c.maxBufSize = maxSize
 		return nil
 	}
 }
